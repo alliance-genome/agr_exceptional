@@ -1,0 +1,15 @@
+target/
+*.class
+*.jar
+*.log
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+.factorypath
+__pycache__/
+*.pyc
+.env
+.venv/
+.DS_Store
