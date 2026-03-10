@@ -42,6 +42,7 @@ import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import software.amazon.awssdk.services.dynamodb.model.TimeToLiveSpecification;
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.UpdateTimeToLiveRequest;
+import software.amazon.awssdk.services.dynamodb.waiters.DynamoDbWaiter;
 
 @ApplicationScoped
 public class DynamoService {
@@ -92,17 +93,8 @@ public class DynamoService {
 					.build())
 				.billingMode(BillingMode.PAY_PER_REQUEST)
 				.build());
-			try {
-				dynamo.updateTimeToLive(UpdateTimeToLiveRequest.builder()
-					.tableName(groupsTable)
-					.timeToLiveSpecification(TimeToLiveSpecification.builder()
-						.attributeName("ttl")
-						.enabled(true)
-						.build())
-					.build());
-			} catch (DynamoDbException ex) {
-				Log.warn("TTL may already be enabled on " + groupsTable + ": " + ex.getMessage());
-			}
+			waitForTable(groupsTable);
+			enableTtl(groupsTable);
 		}
 
 		try {
@@ -121,17 +113,29 @@ public class DynamoService {
 				)
 				.billingMode(BillingMode.PAY_PER_REQUEST)
 				.build());
-			try {
-				dynamo.updateTimeToLive(UpdateTimeToLiveRequest.builder()
-					.tableName(reportsTable)
-					.timeToLiveSpecification(TimeToLiveSpecification.builder()
-						.attributeName("ttl")
-						.enabled(true)
-						.build())
-					.build());
-			} catch (DynamoDbException ex) {
-				Log.warn("TTL may already be enabled on " + reportsTable + ": " + ex.getMessage());
-			}
+			waitForTable(reportsTable);
+			enableTtl(reportsTable);
+		}
+	}
+
+	private void waitForTable(String tableName) {
+		try (DynamoDbWaiter waiter = dynamo.waiter()) {
+			waiter.waitUntilTableExists(DescribeTableRequest.builder().tableName(tableName).build());
+			Log.info("Table active: " + tableName);
+		}
+	}
+
+	private void enableTtl(String tableName) {
+		try {
+			dynamo.updateTimeToLive(UpdateTimeToLiveRequest.builder()
+				.tableName(tableName)
+				.timeToLiveSpecification(TimeToLiveSpecification.builder()
+					.attributeName("ttl")
+					.enabled(true)
+					.build())
+				.build());
+		} catch (DynamoDbException ex) {
+			Log.warn("TTL may already be enabled on " + tableName + ": " + ex.getMessage());
 		}
 	}
 

@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alliancegenome.exceptional.interfaces.ExceptionResourceInterface;
@@ -29,24 +30,33 @@ public class ExceptionCatcher {
 
 	public static synchronized void initialize(String serverEndpoint, String service) {
 		if (initialized) return;
-
+		
 		serviceName = service;
-		api = RestProxyFactory.createProxy(ExceptionResourceInterface.class, serverEndpoint);
+		api = RestProxyFactory.createProxy(ExceptionResourceInterface.class, serverEndpoint + "/api");
 		sender = Executors.newSingleThreadExecutor(r -> {
 			Thread t = new Thread(r, "agr-exceptional-sender");
 			t.setDaemon(true);
 			return t;
 		});
-
+		
 		Thread.setDefaultUncaughtExceptionHandler((t, e) -> send(e));
-		Thread.currentThread().setUncaughtExceptionHandler((t, e) -> send(e));
+		Thread.currentThread().setUncaughtExceptionHandler((t, e) -> {
+			send(e);
+		});
+
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			sender.shutdown();
+			try {
+				sender.awaitTermination(5, TimeUnit.SECONDS);
+			} catch (InterruptedException ignored) {}
+		}, "agr-exceptional-shutdown"));
 
 		initialized = true;
 	}
 
 	public static synchronized void initialize() {
 		if (initialized) return;
-
+		
 		String endpoint = System.getenv("AGR_EXCEPTIONAL_ENDPOINT");
 		if (endpoint == null) {
 			endpoint = System.getProperty("agr.exceptional.endpoint");
@@ -75,7 +85,6 @@ public class ExceptionCatcher {
 		t.printStackTrace(new PrintWriter(sw));
 		String stacktrace = sw.toString();
 		int hash = stacktrace.hashCode();
-
 		long now = System.currentTimeMillis();
 		Long lastSent = recentHashes.get(hash);
 		if (lastSent != null && (now - lastSent) < DEDUP_WINDOW_MS) {
