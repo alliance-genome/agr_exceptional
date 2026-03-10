@@ -4,16 +4,23 @@ import org.alliancegenome.exceptional.interfaces.ExceptionResourceInterface;
 import org.alliancegenome.exceptional.model.ExceptionReport;
 
 import io.quarkus.logging.Log;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 
 public class ExceptionResource implements ExceptionResourceInterface {
 
+	@Inject
+	IngestService ingestService;
+
 	@Override
 	public Response ingest(ExceptionReport report) {
-		// TODO: Phase 2 — parse, buffer, store
-		Log.infof("[%s] %s: %s", report.getService(), report.getType(), report.getMessage());
-		Log.info(report.getStacktrace());
-		return Response.accepted().build();
+		try {
+			ingestService.ingest(report);
+			return Response.accepted().build();
+		} catch (Exception e) {
+			Log.error("Failed to ingest exception report", e);
+			return Response.serverError().entity(e.getMessage()).build();
+		}
 	}
 
 	@Override
