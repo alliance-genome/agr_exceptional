@@ -1,7 +1,7 @@
 # AGR Exceptional — Phase Summary
 
 ## Phase 1 — Client Library (MVP)
-**Status: In Progress**
+**Status: Complete**
 
 Java client JAR that captures uncaught exceptions and sends them to the server via HTTP POST.
 
@@ -10,22 +10,25 @@ Java client JAR that captures uncaught exceptions and sends them to the server v
 - [x] ExceptionReport model with Lombok
 - [x] Shared ExceptionResourceInterface (Jandex indexed)
 - [x] Basic working end-to-end (client → server)
-- [ ] Async dispatch + rate limiting / dedup
-- [ ] Configurable endpoint via env var
-- [ ] Unit tests
+- [x] Async dispatch + dedup (60s window)
+- [x] Configurable endpoint via env var (AGR_EXCEPTIONAL_ENDPOINT)
+- [x] Shutdown hook to drain pending sends
+- [x] Unit tests (5 passing)
 - [ ] Publish to Maven Central
 
 ## Phase 2 — Server Ingest, Grouping + Storage
-**Status: Not Started**
+**Status: Complete**
 
 Server groups exceptions by stacktrace similarity using Bedrock Titan embeddings, stores in DynamoDB.
 
-- [ ] Bedrock Titan Text Embeddings V2 integration
-- [ ] Cosine similarity matching against group average embeddings
-- [ ] DynamoDB tables (exception_groups, exception_reports)
-- [ ] Group lifecycle (active / resolved / archived)
-- [ ] Group management REST endpoints
-- [ ] 90-day TTL on all records
+- [x] Bedrock Titan Text Embeddings V2 integration (EmbeddingService)
+- [x] Cosine similarity matching against group average embeddings (configurable threshold)
+- [x] In-memory embedding cache with DynamoDB backing (EmbeddingCache)
+- [x] DynamoDB tables with auto-creation and waiters (exception_groups, exception_reports)
+- [x] Group lifecycle (active / resolved / archived) with auto-reopen
+- [x] Group management REST endpoints (list, detail, reports, resolve, archive, reopen)
+- [x] 90-day TTL on all records
+- [x] AWS profile via AWS_PROFILE env var
 
 ## Phase 3 — API Documentation + UI in agr_logs
 **Status: Not Started**
