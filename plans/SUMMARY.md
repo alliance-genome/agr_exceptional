@@ -41,11 +41,17 @@ Server is a pure API with Swagger. UI lives in agr_logs repo.
 - [x] @Operation/@Tag/@APIResponse/@Parameter on GroupResource (all 6 endpoints)
 - [x] @OpenAPIDefinition on RestApplication with API title/description/version
 - [x] Swagger UI enabled (quarkus.swagger-ui.always-include=true)
+
+## Phase 4 — Exception Viewer UI
+**Status: Not Started**
+
+Exception viewer UI in agr_logs repo.
+
 - [ ] Groups list view in agr_logs UI
 - [ ] Group detail + exception drill-down
 - [ ] Resolve / archive / reopen actions
 
-## Phase 4 — Deployment
+## Phase 5 — Deployment
 **Status: Not Started**
 
 Internal-only Lambda deployed via CDK (Java).
@@ -56,7 +62,7 @@ Internal-only Lambda deployed via CDK (Java).
 - [ ] Native image build (optional)
 - [ ] GitHub Actions CI/CD
 
-## Phase 5 — Integration
+## Phase 6 — Integration
 **Status: Not Started**
 
 Client library integrated into AGR Java services.
@@ -66,7 +72,7 @@ Client library integrated into AGR Java services.
 - [ ] End-to-end verification with real services
 - [ ] ExceptionCatcher.report() for key caught exceptions
 
-## Phase 6 — Enhancements
+## Phase 7 — Enhancements
 **Status: Not Started**
 
 Production hardening and quality-of-life.
