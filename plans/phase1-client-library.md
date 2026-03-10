@@ -6,17 +6,20 @@ Goal: A working JAR that captures uncaught exceptions and sends them to the serv
 
 - [x] Project structure (multi-module Maven, Java 21)
 - [x] ExceptionCatcher — initialize with endpoint + service name, sets uncaught exception handler
-- [x] HTTP POST to server `/ingest` endpoint using Java HttpClient
+- [x] HTTP POST to server `/ingest` endpoint via rescu REST proxy
 - [x] `report(Throwable)` for manually reporting caught exceptions
+- [x] Shared ExceptionResourceInterface (model module, Jandex indexed)
+- [x] ExceptionReport model with Lombok @Data
 - [x] Build verification (mvn compile passes)
+- [x] Published to GitHub (alliance-genome/agr_exceptional)
 
 ## Design Decisions
 
-- No client-side fingerprinting/signature — the server handles exception grouping via textual similarity
+- No client-side fingerprinting/signature — the server handles exception grouping via embeddings
 - Client is a dumb sender: timestamp, service, host, type, message, stacktrace
-- Zero external dependencies (uses only java.net.http.HttpClient)
+- Uses rescu to create REST proxy from shared ExceptionResourceInterface
 - Three Maven modules under groupId `org.alliancegenome.exceptional`:
-  - `model` — shared ExceptionReport model (client + server depend on this)
+  - `model` — shared ExceptionReport, ExceptionResourceInterface (client + server depend on this)
   - `client` — client library JAR (what services depend on)
   - `server` — Quarkus server
 
@@ -26,18 +29,18 @@ Goal: A working JAR that captures uncaught exceptions and sends them to the serv
   - timestamp, service, host, type, message, stacktrace
   - Consider adding: thread name, JVM version, environment label
 - [ ] Async dispatch — don't block the throwing thread
-  - Currently uses `sendAsync` but no queue/executor management
+  - Currently uses rescu synchronously
   - Add a bounded queue + single background sender thread
 - [ ] Rate limiting / dedup
-  - Track recent exception messages, suppress duplicates within a time window
-  - Prevent flooding the server with the same exception in a loop
+  - Track recent stacktraces, suppress duplicates within a time window (e.g. 60s)
+  - Prevent flooding the server when a service hits a tight loop throwing the same exception
+  - Simple approach: hash the stacktrace, keep a TTL cache of recently sent hashes
 - [ ] Configurable endpoint
   - Support env var (`AGR_EXCEPTIONAL_ENDPOINT`) and system property
   - Fallback to stderr if endpoint not configured
 - [ ] Unit tests
   - JSON payload format
   - Rate limiting / dedup logic
-- [ ] Maven build produces a clean JAR with no transitive dependencies
 - [ ] Publish to Maven Central
   - Group ID: `org.alliancegenome.exceptional`
   - Sonatype OSSRH account + namespace verification for `org.alliancegenome.exceptional`

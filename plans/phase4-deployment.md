@@ -1,24 +1,59 @@
 # Phase 4 — Deployment
 
-Goal: Running the server in AGR infrastructure on ECS Fargate.
+Goal: Running the server as an internal-only AWS Lambda, entire stack deployed via CDK.
+
+## Design
+
+### Lambda (VPC-internal)
+
+- Quarkus deployed as Lambda via `quarkus-amazon-lambda-http`
+- Lambda runs inside AGR VPC (private subnets)
+- No public access — only reachable by other AGR services within the VPC
+- Function URL or internal ALB for invocation (no public API Gateway)
+- Consider Quarkus native image to minimize cold start (~200-300ms vs ~2-3s JVM)
+- CloudWatch EventBridge rule pings health endpoint every 5 minutes to keep Lambda warm
+
+### CDK (Infrastructure as Code)
+
+- CDK project lives in this repo under `cdk/` (Java)
+- Single stack deploys: Lambda, DynamoDB tables, IAM, EventBridge rule, VPC config
+- Environment-aware (stage/prod) via CDK context or parameters
+
+### Cost
+
+- Lambda: effectively free at ~100 requests/day
+- DynamoDB: pay-per-request, pennies/month
+- Bedrock: pennies/month
+- EventBridge: free tier covers the scheduled pings
 
 ## TODO
 
-- [ ] Dockerfile for Quarkus server
-  - Multi-stage build (Maven build + JRE runtime)
-  - Or native image if feasible
-- [ ] CloudFormation template (similar to agr_logs)
-  - ECS cluster + Fargate service
-  - Internal ALB for viewer/API access
-  - S3 bucket for exception storage (with lifecycle policy)
-  - S3 bucket for Athena query results (1-day retention)
-  - Glue database + table with partition projection
-  - Athena workgroup with scan cutoff
-  - IAM roles (S3 write, Athena query, Glue metadata)
-  - CloudWatch alarms (target health, error logs)
-- [ ] Service discovery (Cloud Map or DNS)
-  - Client library needs a stable endpoint to reach the server
-- [ ] Health check configuration
-  - ALB health check on `/health`
+- [ ] Add `quarkus-amazon-lambda-http` dependency to server
+- [ ] Native image build (optional but recommended for cold start)
+  - GraalVM native compilation
+  - Test all reflection/serialization works in native mode
+- [ ] CDK project (`cdk/` directory)
+  - Lambda function in VPC private subnets
+  - VPC endpoints for DynamoDB and Bedrock (so Lambda doesn't need NAT gateway)
+  - Internal-only access (no public endpoint)
+  - DynamoDB tables
+    - exception_groups: GSI on status, TTL enabled, pay-per-request
+    - exception_reports: TTL enabled, pay-per-request
+  - IAM role for Lambda
+    - DynamoDB read/write (scoped to tables)
+    - Bedrock InvokeModel (scoped to Titan model)
+    - CloudWatch Logs
+  - EventBridge rule: ping health endpoint every 5 minutes
+  - CloudWatch alarms (Lambda errors, duration)
+  - Security group: allow inbound only from AGR VPC CIDR
+- [ ] Environment support
+  - Stage and prod stacks from same CDK app
+  - Per-environment DynamoDB table names
+  - Reference existing AGR VPC/subnets
+- [ ] Stable internal endpoint for client library
+  - Lambda function URL (IAM auth) or internal ALB
+  - Discoverable by AGR services (Cloud Map, SSM parameter, or env var)
 - [ ] GitHub Actions workflow
-  - Build, push to ECR, deploy to ECS on push to main
+  - Build Quarkus (native or JVM), package
+  - CDK diff on PR
+  - CDK deploy on push to main

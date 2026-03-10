@@ -4,22 +4,27 @@ Goal: Client library integrated into AGR Java services, exceptions flowing end-t
 
 ## TODO
 
-- [ ] Publish client JAR to AGR Maven repo (or GitHub Packages)
+- [ ] Publish client + model JARs to Maven Central
+  - Sonatype OSSRH setup (from phase 1)
+  - First release version (e.g. 0.0.1)
 - [ ] Add dependency to agr_curation
+  - `org.alliancegenome.exceptional:client`
   - Initialize in application startup (Quarkus @Startup bean)
-  - Configure endpoint and service name ("agr_curation")
+  - Service name: "agr_curation"
 - [ ] Add dependency to agr_java_software
-  - agr_indexer — initialize on indexer startup
-  - agr_variant_indexer — initialize on indexer startup
-  - Configure service names per indexer
+  - agr_indexer — initialize on indexer startup, service name: "agr_indexer"
+  - agr_variant_indexer — initialize on startup, service name: "agr_variant_indexer"
 - [ ] Add dependency to agr_api (if applicable)
 - [ ] Configure endpoint per environment
-  - Internal ALB DNS or Cloud Map service name
-  - Env var: AGR_EXCEPTIONAL_ENDPOINT
+  - Internal Lambda URL or ALB DNS
+  - Env var: `AGR_EXCEPTIONAL_ENDPOINT`
+  - Set via ECS task definition / environment config
 - [ ] End-to-end verification
   - Trigger a test exception in each service
-  - Verify it appears in the server buffer and UI
-  - Verify it persists to S3 and is queryable via Athena
+  - Verify it arrives at the server and creates a group in DynamoDB
+  - Verify it appears in the agr_logs UI exceptions tab
+  - Verify grouping works (send same exception twice, confirm single group)
 - [ ] Add `ExceptionCatcher.report()` calls for key caught exceptions
   - Bulk load failures in curation
   - Indexer document failures
+  - API request handling errors

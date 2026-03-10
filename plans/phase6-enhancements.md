@@ -4,25 +4,23 @@ Goal: Production hardening and quality-of-life features.
 
 ## TODO
 
-- [ ] Exception aggregation
-  - Group by signature, show first seen / last seen / count
-  - Trend over time (spark line or bar chart)
-- [ ] Alerting on new exception signatures
-  - Notify when a never-before-seen signature appears
-  - Webhook, Slack, or email integration
-- [ ] Resolved / acknowledged status
-  - Mark a signature as resolved
-  - Re-open automatically if it recurs
+- [ ] Alerting on new exception groups
+  - Notify when a never-before-seen group is created
+  - Slack webhook or SNS integration
+- [ ] Alerting on resolved group reopened
+  - Notify when a "fixed" exception comes back
 - [ ] Environment context in payload
-  - JVM version, OS, env vars, Quarkus profile
+  - JVM version, OS, Quarkus profile
   - Git commit hash of the reporting service
+  - Additional metadata map for custom fields
 - [ ] Quarkus CDI auto-initialization
   - @Startup bean that reads config and initializes ExceptionCatcher
   - Zero-code integration: just add the JAR + set env vars
-- [ ] Retention policies
-  - S3 lifecycle rules (configurable per environment)
-  - Buffer TTL for resolved exceptions
+- [ ] Trend data on groups
+  - Track exception count per hour/day
+  - Expose via API for UI spark lines or charts
 - [ ] Demo mode for local development
-  - Generate fake exceptions for UI testing without a real client
+  - Server generates fake exception groups for UI testing
 - [ ] MCP tool integration
-  - Query exceptions from Claude Code (like the logs MCP tool)
+  - Query exception groups from Claude Code (like the logs MCP tool)
+  - View active groups, drill into reports
