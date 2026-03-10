@@ -13,13 +13,13 @@ import jakarta.ws.rs.core.Response;
 @Path("/exception")
 public interface ExceptionResourceInterface {
 
-    @POST
-    @Path("/ingest")
-    @Consumes(MediaType.APPLICATION_JSON)
-    Response ingest(ExceptionReport report);
+	@POST
+	@Path("/ingest")
+	@Consumes(MediaType.APPLICATION_JSON)
+	Response ingest(ExceptionReport report);
 
-    @GET
-    @Path("/health")
-    @Produces(MediaType.APPLICATION_JSON)
-    Response health();
+	@GET
+	@Path("/health")
+	@Produces(MediaType.APPLICATION_JSON)
+	Response health();
 }
