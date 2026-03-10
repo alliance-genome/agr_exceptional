@@ -43,13 +43,17 @@ Server is a pure API with Swagger. UI lives in agr_logs repo.
 - [x] Swagger UI enabled (quarkus.swagger-ui.always-include=true)
 
 ## Phase 4 — Exception Viewer UI
-**Status: Not Started**
+**Status: Complete**
 
-Exception viewer UI in agr_logs repo.
+Exception viewer UI in agr_logs repo, calling agr_exceptional API cross-origin.
 
-- [ ] Groups list view in agr_logs UI
-- [ ] Group detail + exception drill-down
-- [ ] Resolve / archive / reopen actions
+- [x] CORS enabled on server (dev: all origins, prod: logs.alliancegenome.org)
+- [x] Groups list view sorted by count descending, with status filter tabs
+- [x] Group detail modal (85vw) with summary, services, hosts, reports
+- [x] Expandable stacktraces with inline arrow toggle
+- [x] Resolve / archive / reopen actions with confirmation dialogs
+- [x] Nav tabs linking between Logs and Exceptions pages
+- [x] Flask route serving /exceptions page
 
 ## Phase 5 — Deployment
 **Status: Not Started**
