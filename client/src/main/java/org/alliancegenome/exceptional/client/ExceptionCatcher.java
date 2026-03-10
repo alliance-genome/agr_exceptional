@@ -42,6 +42,7 @@ public class ExceptionCatcher {
 		Thread.setDefaultUncaughtExceptionHandler((t, e) -> send(e));
 		Thread.currentThread().setUncaughtExceptionHandler((t, e) -> {
 			send(e);
+			e.printStackTrace();
 		});
 
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {

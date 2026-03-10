@@ -14,7 +14,7 @@ Java client JAR that captures uncaught exceptions and sends them to the server v
 - [x] Configurable endpoint via env var (AGR_EXCEPTIONAL_ENDPOINT)
 - [x] Shutdown hook to drain pending sends
 - [x] Unit tests (5 passing)
-- [ ] Publish to Maven Central
+- [x] Published to Maven Central (0.1.0)
 
 ## Phase 2 — Server Ingest, Grouping + Storage
 **Status: Complete**
@@ -30,13 +30,17 @@ Server groups exceptions by stacktrace similarity using Bedrock Titan embeddings
 - [x] 90-day TTL on all records
 - [x] AWS profile via AWS_PROFILE env var
 
-## Phase 3 — API Documentation + UI in agr_logs
-**Status: Not Started**
+## Phase 3 — OpenAPI Annotations + Swagger UI
+**Status: Complete**
 
 Server is a pure API with Swagger. UI lives in agr_logs repo.
 
-- [ ] OpenAPI annotations on all endpoints
-- [ ] Swagger UI in dev/stage
+- [x] MicroProfile OpenAPI dependency in model module
+- [x] @Schema annotations on ExceptionGroup and ExceptionReport
+- [x] @Operation/@Tag/@APIResponse on ExceptionResourceInterface (ingest, health)
+- [x] @Operation/@Tag/@APIResponse/@Parameter on GroupResource (all 6 endpoints)
+- [x] @OpenAPIDefinition on RestApplication with API title/description/version
+- [x] Swagger UI enabled (quarkus.swagger-ui.always-include=true)
 - [ ] Groups list view in agr_logs UI
 - [ ] Group detail + exception drill-down
 - [ ] Resolve / archive / reopen actions
@@ -57,7 +61,7 @@ Internal-only Lambda deployed via CDK (Java).
 
 Client library integrated into AGR Java services.
 
-- [ ] Publish to Maven Central (0.0.x versioning)
+- [x] Published to Maven Central (0.1.0)
 - [ ] Add to agr_curation, agr_java_software, agr_api
 - [ ] End-to-end verification with real services
 - [ ] ExceptionCatcher.report() for key caught exceptions
