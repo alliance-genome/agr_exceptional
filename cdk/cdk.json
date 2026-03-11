@@ -1,5 +1,5 @@
 {
-  "app": "mvn -e -q exec:java",
+  "app": "mvn -e -q compile exec:java",
   "context": {
     "@aws-cdk/aws-apigateway:usagePlanKeyOrderInsensitiveId": true,
     "@aws-cdk/aws-lambda:recognizeLayerVersion": true

@@ -217,7 +217,7 @@ public class ExceptionalStack extends Stack {
 			)))
 			.build());
 
-		// Route53 A record
+		// Route53 A record - private zone
 		var hostedZone = HostedZone.fromHostedZoneAttributes(this, "Zone",
 			HostedZoneAttributes.builder()
 				.hostedZoneId("Z007692222A6W93AZVSPD")
@@ -226,6 +226,19 @@ public class ExceptionalStack extends Stack {
 
 		ARecord.Builder.create(this, "DnsRecord")
 			.zone(hostedZone)
+			.recordName("exceptions.alliancegenome.org")
+			.target(RecordTarget.fromAlias(new InterfaceVpcEndpointTarget(apiEndpoint)))
+			.build();
+
+		// Route53 A record - public zone
+		var publicZone = HostedZone.fromHostedZoneAttributes(this, "PublicZone",
+			HostedZoneAttributes.builder()
+				.hostedZoneId("Z3IZ3D6V94JEC2")
+				.zoneName("alliancegenome.org")
+				.build());
+
+		ARecord.Builder.create(this, "PublicDnsRecord")
+			.zone(publicZone)
 			.recordName("exceptions.alliancegenome.org")
 			.target(RecordTarget.fromAlias(new InterfaceVpcEndpointTarget(apiEndpoint)))
 			.build();
