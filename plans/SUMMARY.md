@@ -56,31 +56,39 @@ Exception viewer UI in agr_logs repo, calling agr_exceptional API cross-origin.
 - [x] Flask route serving /exceptions page
 
 ## Phase 5 — Deployment
-**Status: Not Started**
+**Status: Complete**
 
 Internal-only Lambda deployed via CDK (Java).
 
-- [ ] Quarkus Lambda adapter
-- [ ] CDK stack (Lambda, DynamoDB, IAM, EventBridge warmup)
-- [ ] VPC-internal only, no public access
-- [ ] Native image build (optional)
-- [ ] GitHub Actions CI/CD
+- [x] Quarkus Lambda adapter (quarkus-amazon-lambda-rest → function.zip)
+- [x] CDK stack (Lambda, Private API Gateway, VPC endpoint, EventBridge warmup)
+- [x] VPC-internal only via Private API Gateway + execute-api VPC endpoint
+- [x] Private custom domain name (exceptions.alliancegenome.org) with ACM wildcard cert
+- [x] SnapStart enabled (~1s cold start restore, ~6-45ms warm)
+- [x] EventBridge warmup rule (every 5 min)
+- [x] IAM policies (DynamoDB CRUD + TTL, Bedrock InvokeModel)
+- [x] Route53 A record alias in private hosted zone
+- [x] GitHub Actions workflow (Maven Central publish on release)
+- [x] Makefile targets (build, mvndeploy, cdkdeploy)
 
 ## Phase 6 — Integration
-**Status: Not Started**
+**Status: In Progress**
 
 Client library integrated into AGR Java services.
 
 - [x] Published to Maven Central (0.1.0)
-- [ ] Add to agr_curation, agr_java_software, agr_api
-- [ ] End-to-end verification with real services
-- [ ] ExceptionCatcher.report() for key caught exceptions
+- [x] Add to agr_curation (PR [#2532](https://github.com/alliance-genome/agr_curation/pull/2532))
+- [x] Add to agr_java_software — indexers + API (PR [#1513](https://github.com/alliance-genome/agr_java_software/pull/1513))
+- [x] ExceptionCatcher.report() throughout indexers
+- [ ] End-to-end verification with real services (after PRs merge)
 
 ## Phase 7 — Enhancements
 **Status: Not Started**
 
 Production hardening and quality-of-life.
 
+- [ ] GraalVM native image build (faster cold starts)
+- [ ] Automated CDK deploy from GitHub Actions (on release)
 - [ ] Alerting (new groups, reopened groups → Slack/SNS)
 - [ ] Richer payload (JVM version, git commit hash)
 - [ ] Quarkus CDI auto-initialization

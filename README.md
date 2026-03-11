@@ -11,16 +11,17 @@ A Java client library that captures exceptions from AGR services and sends them 
 | `model` | Shared interfaces and models (ExceptionReport, ExceptionResourceInterface) |
 | `client` | Java client library — drop into any AGR service to capture and report exceptions |
 | `server` | Quarkus REST server — receives exceptions, computes embeddings, manages groups |
+| `cdk` | AWS CDK stack — Lambda, Private API Gateway, VPC endpoint, Route53 |
 
 ## Quick Start
 
 ### Build
 
 ```bash
-mvn install
+make
 ```
 
-### Run the server
+### Run the server locally
 
 ```bash
 cd server
@@ -28,6 +29,14 @@ mvn quarkus:dev
 ```
 
 Server starts on `http://localhost:8080`. Swagger UI available at `http://localhost:8080/swagger-ui`.
+
+### Deploy
+
+```bash
+make cdkdeploy
+```
+
+Deploys as a Lambda behind a Private API Gateway, accessible within the VPC at `https://exceptions.alliancegenome.org/api`.
 
 ### Use the client
 
@@ -37,14 +46,14 @@ Add the dependency:
 <dependency>
     <groupId>org.alliancegenome.exceptional</groupId>
     <artifactId>client</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0</version>
 </dependency>
 ```
 
 Initialize in your application:
 
 ```java
-ExceptionCatcher.initialize("http://localhost:8080", "my-service");
+ExceptionCatcher.initialize("https://exceptions.alliancegenome.org", "my-service");
 ```
 
 Uncaught exceptions are automatically captured. For caught exceptions:

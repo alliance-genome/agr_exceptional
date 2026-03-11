@@ -1,0 +1,7 @@
+{
+  "app": "mvn -e -q exec:java",
+  "context": {
+    "@aws-cdk/aws-apigateway:usagePlanKeyOrderInsensitiveId": true,
+    "@aws-cdk/aws-lambda:recognizeLayerVersion": true
+  }
+}
