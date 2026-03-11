@@ -150,7 +150,7 @@ public class ExceptionalStack extends Stack {
 				.stageName("prod")
 				.build())
 			.defaultCorsPreflightOptions(CorsOptions.builder()
-				.allowOrigins(List.of("https://logs.alliancegenome.org"))
+				.allowOrigins(List.of("https://logs.alliancegenome.org", "http://localhost:5000", "http://localhost:5001", "http://localhost:3000", "http://localhost:8080"))
 				.allowMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"))
 				.allowHeaders(List.of("Content-Type", "Authorization"))
 				.build())
