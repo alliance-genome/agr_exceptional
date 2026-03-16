@@ -42,7 +42,6 @@ public class ExceptionCatcher {
 		Thread.setDefaultUncaughtExceptionHandler((t, e) -> send(e));
 		Thread.currentThread().setUncaughtExceptionHandler((t, e) -> {
 			send(e);
-			e.printStackTrace();
 		});
 
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -101,6 +100,8 @@ public class ExceptionCatcher {
 			System.err.println("[agr_exceptional] Not initialized, logging to stderr:");
 			t.printStackTrace(System.err);
 			return;
+		} else {
+			t.printStackTrace(System.err);
 		}
 
 		ExceptionReport report = buildReport(t, stacktrace);
