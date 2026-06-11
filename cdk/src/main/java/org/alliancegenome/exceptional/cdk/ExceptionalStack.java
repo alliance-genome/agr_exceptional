@@ -77,7 +77,7 @@ public class ExceptionalStack extends Stack {
 		Function fn = Function.Builder.create(this, "ExceptionalFn")
 			.runtime(Runtime.JAVA_21)
 			.handler("io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler::handleRequest")
-			.code(Code.fromAsset("../server/target/function.zip"))
+			.code(Code.fromAsset("../exceptional-server/target/function.zip"))
 			.memorySize(1024)
 			.timeout(Duration.seconds(30))
 			.vpc(vpc)

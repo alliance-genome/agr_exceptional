@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.alliancegenome.exceptional</groupId>
+        <groupId>org.alliancegenome</groupId>
         <artifactId>agr_exceptional</artifactId>
         <version>0.2.0</version>
     </parent>
 
-    <artifactId>server</artifactId>
+    <artifactId>exceptional-server</artifactId>
     <packaging>jar</packaging>
 
     <name>AGR Exceptional Server</name>
@@ -37,8 +37,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.alliancegenome.exceptional</groupId>
-            <artifactId>model</artifactId>
+            <groupId>org.alliancegenome</groupId>
+            <artifactId>exceptional-model</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

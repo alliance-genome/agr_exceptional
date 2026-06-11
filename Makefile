@@ -1,7 +1,7 @@
 .PHONY: build mvndeploy cdkdeploy
 
 build:
-	mvn package -pl model,server -am -DskipTests
+	mvn package -pl exceptional-model,exceptional-server -am -DskipTests
 
 mvndeploy:
 	@CURRENT=$$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout); \
