@@ -91,3 +91,4 @@ AGR Java Services                     AGR Exceptional Server (Lambda)
 - [Phase 4 — Deployment](plans/phase4-deployment.md) — Lambda via CDK, VPC-internal
 - [Phase 5 — Integration](plans/phase5-integration.md) — roll out to AGR services
 - [Phase 6 — Enhancements](plans/phase6-enhancements.md) — alerting, auto-init, MCP integration
+
